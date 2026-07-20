@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Pomodoro Neuro</title>
-  <link rel="stylesheet" href="/css/style.css" />
+  <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
   <header class="topbar">
@@ -77,12 +77,13 @@
   <script type="importmap">
   {
     "imports": {
-      "three": "/vendor/three.module.js",
-      "three/addons/": "/vendor/jsm/"
+      "three": "./vendor/three.module.js",
+      "three/addons/": "./vendor/jsm/"
     }
   }
   </script>
-  <script type="module" src="/js/brain3d.js"></script>
-  <script src="/js/app.js"></script>
+  <script src="js/store.js"></script>
+  <script type="module" src="js/brain3d.js"></script>
+  <script src="js/app.js"></script>
 </body>
 </html>

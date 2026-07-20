@@ -24,7 +24,7 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
 // --- Configuración del modelo ---------------------------------------------
-const MODEL_URL = '/assets/brain.glb';
+const MODEL_URL = 'assets/brain.glb';
 const MODEL_TARGET_SIZE = 4.8;       // tamaño al que se escala el modelo
 const MODEL_ROTATION = [0, 0, 0];    // [x,y,z] radianes, por si viene torcido
 
@@ -451,8 +451,7 @@ function setStatus(msg) {
 // Datos + tarjetas
 // ==========================================================================
 async function fetchData() {
-  const res = await fetch('/api/content');
-  const data = await res.json();
+  const data = await window.Store.getContent();
   levelsData = data.levels || [];
   renderCards();
   applyLevels();

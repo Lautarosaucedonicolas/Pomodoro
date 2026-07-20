@@ -11,11 +11,8 @@ let remaining = WORK_MIN * 60;
 let timerId = null;
 let running = false;
 
-// --- Helpers de API ---
-const api = {
-  get: (url) => fetch(url).then((r) => r.json()),
-  post: (url) => fetch(url, { method: 'POST' }).then((r) => r.json()),
-};
+// Los datos (progreso + contenido) los maneja window.Store (modo dual:
+// servidor PHP si está disponible, o localStorage en hosting estático).
 
 // --- Elementos ---
 const $ = (sel) => document.querySelector(sel);
@@ -75,7 +72,7 @@ async function onPhaseEnd() {
   } else {
     // Terminó el ciclo completo (enfoque + descanso) -> punto
     stop();
-    const state = await api.post('/api/pomodoro/complete');
+    const state = await Store.completePomodoro();
     applyState(state);
     if (state.leveledUp) {
       showToast(`¡Subiste al nivel ${state.level}! 🧠 Nuevo dato desbloqueado`);
@@ -141,11 +138,11 @@ function applyState(s) {
 }
 
 async function loadState() {
-  applyState(await api.get('/api/progress'));
+  applyState(await Store.getProgress());
 }
 
 async function loadContent() {
-  const { levels } = await api.get('/api/content');
+  const { levels } = await Store.getContent();
   renderLearningList(levels);
   // El cerebro 3D (módulo brain3d.js) se refresca por su cuenta.
   if (window.Brain3D) window.Brain3D.refresh();
@@ -181,7 +178,7 @@ function showToast(msg) {
 // ==========================================================================
 $('#btn-reset-all').addEventListener('click', async () => {
   if (!confirm('¿Reiniciar todo el progreso?')) return;
-  applyState(await api.post('/api/progress/reset'));
+  applyState(await Store.resetProgress());
   loadContent();
 });
 
