@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pomodoro Neuro</title>
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+  <header class="topbar">
+    <h1>🍅 Pomodoro Neuro</h1>
+    <nav class="tabs">
+      <button class="tab active" data-view="pomodoro">Hacer pomodoros</button>
+      <button class="tab" data-view="brain">Mi cerebro</button>
+    </nav>
+    <div class="stats">
+      <span>Nivel <strong id="stat-level">1</strong></span>
+      <span><strong id="stat-points">0</strong> pts</span>
+    </div>
+  </header>
+
+  <main>
+    <!-- ================= SECCIÓN POMODORO ================= -->
+    <section id="view-pomodoro" class="view active">
+      <div class="timer-card">
+        <p class="phase" id="phase-label">Enfoque</p>
+        <div class="clock" id="clock">25:00</div>
+        <div class="controls">
+          <button id="btn-start" class="btn primary">Empezar</button>
+          <button id="btn-pause" class="btn" disabled>Pausar</button>
+          <button id="btn-reset" class="btn ghost">Reiniciar</button>
+        </div>
+        <label class="test-mode">
+          <input type="checkbox" id="test-mode" />
+          Modo prueba (segundos en vez de minutos)
+        </label>
+      </div>
+
+      <div class="progress-card">
+        <p>Pomodoros completados: <strong id="pomo-count">0</strong></p>
+        <div class="bar"><div class="bar-fill" id="level-bar"></div></div>
+        <p class="next" id="next-level-text"></p>
+      </div>
+
+      <div class="unlocked-card">
+        <h2>🧠 Neurociencia del aprendizaje</h2>
+        <p class="hint">Cada nivel desbloquea un dato nuevo.</p>
+        <ul id="learning-list"></ul>
+      </div>
+    </section>
+
+    <!-- ================= SECCIÓN MI CEREBRO ================= -->
+    <section id="view-brain" class="view">
+      <div class="brain-wrap">
+        <div id="brain3d-container" class="brain3d">
+          <div id="brain-tooltip" class="brain-tooltip hidden"></div>
+          <div id="brain-status" class="brain-status hidden"></div>
+        </div>
+        <p class="hint canvas-hint">Arrastrá para girar · rueda para acercar</p>
+      </div>
+
+      <div class="brain-side">
+        <h2>Tu cerebro se ilumina a medida que subís de nivel</h2>
+        <p class="hint">Regiones iluminadas: <strong id="regions-count">0</strong> / <span id="regions-total">8</span></p>
+        <div id="brain-content"></div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Aviso de subida de nivel -->
+  <div id="toast" class="toast hidden"></div>
+
+  <footer class="footer">
+    <button id="btn-reset-all" class="btn ghost small">Reiniciar progreso</button>
+  </footer>
+
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "/vendor/three.module.js",
+      "three/addons/": "/vendor/jsm/"
+    }
+  }
+  </script>
+  <script type="module" src="/js/brain3d.js"></script>
+  <script src="/js/app.js"></script>
+</body>
+</html>

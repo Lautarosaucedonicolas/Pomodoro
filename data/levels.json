@@ -1,0 +1,74 @@
+[
+  {
+    "level": 1,
+    "name": "Primer foco",
+    "pointsRequired": 0,
+    "brainRegion": "prefrontal",
+    "neuroLearning": "La atención sostenida se apoya en la corteza prefrontal. Trabajar en bloques cortos (como el Pomodoro) evita agotarla y mantiene el aprendizaje eficiente.",
+    "neuroThinking": "Tu capacidad de decidir y planificar vive en la corteza prefrontal. Cada vez que eliges enfocarte en lugar de distraerte, la estás entrenando.",
+    "exercise": "Antes de empezar el pomodoro, escribí en una línea la ÚNICA tarea que vas a hacer. Una sola. Eso reduce la carga de decisiones."
+  },
+  {
+    "level": 2,
+    "name": "Ritmo constante",
+    "pointsRequired": 20,
+    "brainRegion": "motor",
+    "neuroLearning": "La repetición espaciada (estudiar poquito muchas veces) genera aprendizajes más duraderos que las maratones de estudio de última hora.",
+    "neuroThinking": "El área motora se fortalece con la práctica. Convertir el foco en un hábito diario hace que empezar cueste cada vez menos.",
+    "exercise": "Al terminar el pomodoro, resumí en voz alta en 2 frases qué aprendiste. Explicarlo consolida la memoria."
+  },
+  {
+    "level": 3,
+    "name": "Memoria en marcha",
+    "pointsRequired": 40,
+    "brainRegion": "hippocampus",
+    "neuroLearning": "El hipocampo convierte lo que practicás en memoria de largo plazo, sobre todo durante el descanso y el sueño. Por eso los 5 minutos de pausa importan.",
+    "neuroThinking": "Recordar activamente (traer algo a la mente sin mirarlo) fortalece más las conexiones que releer. Es el 'efecto de recuperación'.",
+    "exercise": "Cerrá el material y, de memoria, anotá 3 ideas clave de lo que estudiaste. Después comparás con el original."
+  },
+  {
+    "level": 4,
+    "name": "Conexiones nuevas",
+    "pointsRequired": 60,
+    "brainRegion": "parietal",
+    "neuroLearning": "El lóbulo parietal integra información de distintos sentidos. Relacionar lo nuevo con algo que ya sabés crea 'ganchos' que facilitan recordarlo.",
+    "neuroThinking": "Pensar con ejemplos concretos activa más regiones que pensar en abstracto: entendés mejor y más rápido.",
+    "exercise": "Tomá un concepto nuevo y buscá una analogía con algo cotidiano. Ej: 'la memoria es como...'."
+  },
+  {
+    "level": 5,
+    "name": "Lenguaje y sentido",
+    "pointsRequired": 80,
+    "brainRegion": "temporal",
+    "neuroLearning": "El lóbulo temporal procesa lenguaje y significado. Aprender el 'por qué' de algo (no solo el 'qué') lo hace mucho más memorable.",
+    "neuroThinking": "Ponerle palabras a una idea la ordena. Escribir lo que pensás mejora la calidad del pensamiento, no solo lo registra.",
+    "exercise": "Elegí un tema y explicáselo a alguien (o a una silla vacía) como si tuviera 10 años. Si te trabás, ahí está tu punto débil."
+  },
+  {
+    "level": 6,
+    "name": "Visión clara",
+    "pointsRequired": 100,
+    "brainRegion": "occipital",
+    "neuroLearning": "El lóbulo occipital procesa lo visual. Diagramas, mapas y esquemas aprovechan que el cerebro recuerda imágenes mejor que listas de texto.",
+    "neuroThinking": "Visualizar mentalmente un proceso paso a paso mejora tanto el aprendizaje como el rendimiento real (lo usan los deportistas).",
+    "exercise": "Convertí lo que estudiaste hoy en un mapa mental de una sola hoja: nodos, flechas, colores."
+  },
+  {
+    "level": 7,
+    "name": "Precisión y hábito",
+    "pointsRequired": 120,
+    "brainRegion": "cerebellum",
+    "neuroLearning": "El cerebelo automatiza habilidades con la práctica. Lo que hoy te cuesta, con repetición pasa a hacerse 'solo' y libera atención para lo difícil.",
+    "neuroThinking": "El descanso no es tiempo perdido: durante la pausa el cerebro sigue procesando y reorganizando lo aprendido (consolidación).",
+    "exercise": "Practicá el mismo tipo de ejercicio 3 veces seguidas variando un detalle cada vez. La variación fortalece el aprendizaje."
+  },
+  {
+    "level": 8,
+    "name": "Cerebro entero",
+    "pointsRequired": 140,
+    "brainRegion": "brainstem",
+    "neuroLearning": "El tronco encefálico regula sueño y alerta. Dormir bien es literalmente cuando se guarda lo aprendido: sin sueño, no hay memoria sólida.",
+    "neuroThinking": "La neuroplasticidad no tiene edad: tu cerebro sigue formando conexiones nuevas mientras lo desafiás. El foco constante es el estímulo.",
+    "exercise": "Cada noche, repasá mentalmente durante 1 minuto lo más importante del día. Ese repaso previo al sueño potencia la consolidación."
+  }
+]

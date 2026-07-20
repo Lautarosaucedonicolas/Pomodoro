@@ -1,0 +1,19 @@
+{
+  "name": "pomodoro-neuro",
+  "version": "0.1.0",
+  "description": "Pomodoro con niveles y datos de neurociencia orientados al aprendizaje. Monolito PHP sin framework.",
+  "scripts": {
+    "start": "php -S 127.0.0.1:8000 -t public public/index.php",
+    "dev": "php -S 127.0.0.1:8000 -t public public/index.php"
+  },
+  "keywords": [
+    "pomodoro",
+    "php",
+    "neurociencia",
+    "aprendizaje"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "three": "^0.185.1"
+  }
+}
