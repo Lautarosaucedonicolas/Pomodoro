@@ -1,4 +1,4 @@
-# 🍅 Pomodoro Neuro
+# 🧠 NeuroFocus
 
 Un temporizador Pomodoro con **niveles** y **datos de neurociencia** orientados
 al aprendizaje. Cada pomodoro completado (25' foco + 5' descanso) suma puntos;

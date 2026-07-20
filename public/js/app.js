@@ -1,5 +1,5 @@
 // ==========================================================================
-// Pomodoro Neuro - frontend (SPA vanilla, sin framework)
+// NeuroFocus - frontend (SPA vanilla, sin framework)
 // ==========================================================================
 
 const WORK_MIN = 25;
