@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Controllers;
 
 use App\Core\Response;
+use App\Core\Auth;
 use App\Services\ProgressService;
 use App\Services\LevelService;
 
@@ -22,14 +23,16 @@ final class ProgressController
     /** GET /api/progress */
     public function show(): void
     {
-        Response::json($this->buildState($this->progress->read()));
+        $user = Auth::requireUser();
+        Response::json($this->buildState($this->progress->read($user['id'])));
     }
 
     /** POST /api/pomodoro/complete */
     public function completePomodoro(): void
     {
-        $before = $this->levels->levelForPoints($this->progress->read()['points']);
-        $data = $this->progress->addCompletedPomodoro();
+        $user = Auth::requireUser();
+        $before = $this->levels->levelForPoints($this->progress->read($user['id'])['points']);
+        $data = $this->progress->addCompletedPomodoro($user['id']);
         $after = $this->levels->levelForPoints($data['points']);
 
         $state = $this->buildState($data);
@@ -40,10 +43,10 @@ final class ProgressController
     /** POST /api/progress/reset */
     public function reset(): void
     {
-        Response::json($this->buildState($this->progress->reset()));
+        $user = Auth::requireUser();
+        Response::json($this->buildState($this->progress->reset($user['id'])));
     }
 
-    /** Arma el estado completo que consume el frontend. */
     private function buildState(array $data): array
     {
         $points = $data['points'];

@@ -17,17 +17,102 @@
 <body>
   <header class="topbar">
     <h1>🧠 NeuroFocus</h1>
-    <nav class="tabs">
+    <nav class="tabs hidden" id="main-tabs">
       <button class="tab active" data-view="pomodoro">Hacer pomodoros</button>
       <button class="tab" data-view="brain">Mi cerebro</button>
     </nav>
-    <div class="stats">
+    <div class="stats hidden" id="header-stats">
       <span>Nivel <strong id="stat-level">1</strong></span>
       <span><strong id="stat-points">0</strong> pts</span>
     </div>
+    <div class="user-chip hidden" id="user-chip">
+      <span id="user-name"></span>
+      <button id="btn-logout" class="btn ghost small">Salir</button>
+    </div>
   </header>
 
-  <main>
+  <!-- ================= AUTENTICACIÓN (sin loguear) ================= -->
+  <div id="auth" class="auth hidden">
+    <!-- LOGIN -->
+    <section id="auth-login" class="auth-view">
+      <div class="auth-card">
+        <div class="auth-logo">🧠</div>
+        <h2>Inicia sesión</h2>
+        <p class="auth-sub">Bienvenido de nuevo a tu entrenamiento mental.</p>
+        <form id="form-login" class="auth-form">
+          <label>Email
+            <input type="email" name="email" placeholder="tu@ejemplo.com" required />
+          </label>
+          <label>Contraseña
+            <div class="pw">
+              <input type="password" name="password" placeholder="Tu contraseña" required />
+              <button type="button" class="pw-toggle" aria-label="Mostrar contraseña">👁</button>
+            </div>
+          </label>
+          <div class="auth-row">
+            <label class="remember"><input type="checkbox" name="remember" /> Recordarme</label>
+            <a href="#" data-soon>¿Olvidaste tu contraseña?</a>
+          </div>
+          <p class="auth-error" id="login-error"></p>
+          <button type="submit" class="btn gradient wide">Iniciar sesión</button>
+        </form>
+        <div class="auth-or"><span>o</span></div>
+        <button type="button" class="btn google wide" data-soon>
+          <span class="g">G</span> Continuar con Google
+        </button>
+        <p class="auth-switch">¿No tienes cuenta? <a href="#" data-goto="register">Regístrate</a></p>
+      </div>
+    </section>
+
+    <!-- REGISTRO -->
+    <section id="auth-register" class="auth-view hidden">
+      <div class="auth-register-wrap">
+        <div class="auth-marketing">
+          <h3>Enfoca tu mente. Transforma tu vida.</h3>
+          <p>NeuroFocus te ayuda a entrenar tu cerebro para lograr más claridad, mejorar tu
+             memoria, aumentar tu atención y recuperar tu capacidad para tareas complejas.
+             Deja atrás el scroll infinito y construí la mejor versión de vos.</p>
+          <ul class="features">
+            <li><span>🎯</span><div><strong>Toma foco de tu cabeza</strong>Reduce la dispersión y enfocate en lo que realmente importa.</div></li>
+            <li><span>🧠</span><div><strong>Mejora tu memoria</strong>Entrená tu cerebro para retener y recordar mejor cada día.</div></li>
+            <li><span>👁️</span><div><strong>Mejora tu atención</strong>Aumentá tu capacidad de concentración y rendimiento.</div></li>
+            <li><span>🧩</span><div><strong>Recuperá tareas complejas</strong>Entrená tu mente para pensar profundo y resolver problemas difíciles.</div></li>
+            <li><span>📱</span><div><strong>Suelta el scrolling</strong>Rompé el ciclo de distracción y recuperá tu tiempo y energía.</div></li>
+          </ul>
+        </div>
+        <div class="auth-card">
+          <div class="auth-logo">🧠</div>
+          <h2>Crea tu cuenta</h2>
+          <p class="auth-sub">Comienza tu viaje hacia una mente más enfocada.</p>
+          <form id="form-register" class="auth-form">
+            <label>Nombre completo
+              <input type="text" name="name" placeholder="Tu nombre completo" required />
+            </label>
+            <label>Email
+              <input type="email" name="email" placeholder="tu@ejemplo.com" required />
+            </label>
+            <label>Contraseña
+              <div class="pw">
+                <input type="password" name="password" placeholder="Crea una contraseña segura" required />
+                <button type="button" class="pw-toggle" aria-label="Mostrar contraseña">👁</button>
+              </div>
+            </label>
+            <label>Confirmar contraseña
+              <div class="pw">
+                <input type="password" name="confirm" placeholder="Confirma tu contraseña" required />
+                <button type="button" class="pw-toggle" aria-label="Mostrar contraseña">👁</button>
+              </div>
+            </label>
+            <p class="auth-error" id="register-error"></p>
+            <button type="submit" class="btn gradient wide">Crear cuenta</button>
+          </form>
+          <p class="auth-switch">¿Ya tienes cuenta? <a href="#" data-goto="login">Inicia sesión</a></p>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <main id="app-main" class="hidden">
     <!-- ================= SECCIÓN POMODORO ================= -->
     <section id="view-pomodoro" class="view active">
       <div class="timer-card">
@@ -78,7 +163,7 @@
   <!-- Aviso de subida de nivel -->
   <div id="toast" class="toast hidden"></div>
 
-  <footer class="footer">
+  <footer class="footer hidden" id="app-footer">
     <button id="btn-reset-all" class="btn ghost small">Reiniciar progreso</button>
   </footer>
 
@@ -90,6 +175,7 @@
     }
   }
   </script>
+  <script src="js/auth.js"></script>
   <script src="js/store.js"></script>
   <script type="module" src="js/brain3d.js"></script>
   <script src="js/app.js"></script>

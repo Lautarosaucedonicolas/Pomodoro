@@ -1,88 +1,60 @@
 // ==========================================================================
-// Capa de datos del frontend (modo dual).
-//
-//  - MODO SERVIDOR: si el backend PHP responde (desarrollo local con
-//    `npm start`), usa la API /api/... y guarda el progreso en el server.
-//  - MODO LOCAL: si no hay PHP (por ej. publicado en GitHub Pages), replica
-//    la misma lógica en el navegador y guarda el progreso en localStorage.
-//
-// Ambos modos exponen la misma interfaz, así que app.js y brain3d.js no
-// necesitan saber cuál está activo.
+// Capa de datos del progreso (modo dual, por usuario).
+//   - SERVIDOR (PHP): usa /api/... con el token del usuario (Authorization).
+//   - LOCAL (Pages): replica la lógica y guarda en localStorage por usuario.
+// Comparte la detección de backend con window.Auth.
 // ==========================================================================
 
 window.Store = (() => {
-  const LS_KEY = 'pomodoro_neuro_progress';
   const POINTS_PER_POMODORO = 20;
-
-  let mode = null;      // 'server' | 'local'
   let levelsCache = null;
 
-  // --- Detección de modo (una sola vez) ---
-  async function ensureMode() {
-    if (mode) return mode;
-    try {
-      const r = await fetch('api/progress', { method: 'GET' });
-      const ct = r.headers.get('content-type') || '';
-      if (r.ok && ct.includes('json')) { mode = 'server'; return mode; }
-    } catch (_) { /* sin backend */ }
-    mode = 'local';
-    return mode;
-  }
+  const isServer = () => window.Auth.isServer();
+  const headers = () => window.Auth.authHeaders();
+  const userId = () => (window.Auth.getUser() ? window.Auth.getUser().id : 'anon');
+  const lsKey = () => 'neurofocus_progress_' + userId();
 
-  // --- Utilidades del modo LOCAL ---
+  // --- Modo LOCAL ---
   async function getLevels() {
     if (levelsCache) return levelsCache;
-    const r = await fetch('data/levels.json');
-    levelsCache = await r.json();
+    levelsCache = await (await fetch('data/levels.json')).json();
     return levelsCache;
   }
-
   function readLocal() {
     try {
-      const raw = localStorage.getItem(LS_KEY);
-      const d = raw ? JSON.parse(raw) : null;
+      const d = JSON.parse(localStorage.getItem(lsKey()));
       return { points: (d && +d.points) || 0, completedPomodoros: (d && +d.completedPomodoros) || 0 };
     } catch (_) {
       return { points: 0, completedPomodoros: 0 };
     }
   }
-
-  function writeLocal(data) {
-    localStorage.setItem(LS_KEY, JSON.stringify(data));
-  }
+  function writeLocal(data) { localStorage.setItem(lsKey(), JSON.stringify(data)); }
 
   function levelForPoints(levels, points) {
-    let current = 1;
-    for (const lv of levels) if (points >= lv.pointsRequired) current = lv.level;
-    return current;
+    let c = 1;
+    for (const lv of levels) if (points >= lv.pointsRequired) c = lv.level;
+    return c;
   }
-
   function pointsForNextLevel(levels, points) {
     for (const lv of levels) if (points < lv.pointsRequired) return lv.pointsRequired;
     return null;
   }
-
   function buildState(levels, data) {
-    const points = data.points;
     return {
-      points,
+      points: data.points,
       completedPomodoros: data.completedPomodoros,
       pointsPerPomodoro: POINTS_PER_POMODORO,
-      level: levelForPoints(levels, points),
+      level: levelForPoints(levels, data.points),
       maxLevel: levels.length,
-      nextLevelPoints: pointsForNextLevel(levels, points),
+      nextLevelPoints: pointsForNextLevel(levels, data.points),
     };
   }
-
   function unlockedContent(levels, points) {
     return levels.map((lv) => {
       const unlocked = points >= lv.pointsRequired;
       return {
-        level: lv.level,
-        name: lv.name,
-        pointsRequired: lv.pointsRequired,
-        brainRegion: lv.brainRegion,
-        unlocked,
+        level: lv.level, name: lv.name, pointsRequired: lv.pointsRequired,
+        brainRegion: lv.brainRegion, unlocked,
         neuroLearning: unlocked ? lv.neuroLearning : null,
         neuroThinking: unlocked ? lv.neuroThinking : null,
         exercise: unlocked ? lv.exercise : null,
@@ -92,16 +64,13 @@ window.Store = (() => {
 
   // --- Interfaz pública ---
   async function getProgress() {
-    if ((await ensureMode()) === 'server') {
-      return (await fetch('api/progress')).json();
-    }
-    const levels = await getLevels();
-    return buildState(levels, readLocal());
+    if (await isServer()) return (await fetch('api/progress', { headers: headers() })).json();
+    return buildState(await getLevels(), readLocal());
   }
 
   async function completePomodoro() {
-    if ((await ensureMode()) === 'server') {
-      return (await fetch('api/pomodoro/complete', { method: 'POST' })).json();
+    if (await isServer()) {
+      return (await fetch('api/pomodoro/complete', { method: 'POST', headers: headers() })).json();
     }
     const levels = await getLevels();
     const data = readLocal();
@@ -115,21 +84,17 @@ window.Store = (() => {
   }
 
   async function resetProgress() {
-    if ((await ensureMode()) === 'server') {
-      return (await fetch('api/progress/reset', { method: 'POST' })).json();
+    if (await isServer()) {
+      return (await fetch('api/progress/reset', { method: 'POST', headers: headers() })).json();
     }
-    const levels = await getLevels();
     const data = { points: 0, completedPomodoros: 0 };
     writeLocal(data);
-    return buildState(levels, data);
+    return buildState(await getLevels(), data);
   }
 
   async function getContent() {
-    if ((await ensureMode()) === 'server') {
-      return (await fetch('api/content')).json();
-    }
-    const levels = await getLevels();
-    return { levels: unlockedContent(levels, readLocal().points) };
+    if (await isServer()) return (await fetch('api/content', { headers: headers() })).json();
+    return { levels: unlockedContent(await getLevels(), readLocal().points) };
   }
 
   return { getProgress, completePomodoro, resetProgress, getContent };

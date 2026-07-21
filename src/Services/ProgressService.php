@@ -5,8 +5,9 @@ declare(strict_types=1);
 namespace App\Services;
 
 /**
- * Persistencia del progreso. Por ahora en un JSON (storage/progress.json).
- * Cuando sumemos base de datos, solo cambia esta clase; los controllers no.
+ * Persistencia del progreso, ahora POR USUARIO.
+ * storage/progress.json es un mapa { userId: {points, completedPomodoros} }.
+ * Cuando sumemos base de datos, solo cambia esta clase.
  */
 final class ProgressService
 {
@@ -20,37 +21,33 @@ final class ProgressService
     }
 
     /** @return array{points:int, completedPomodoros:int} */
-    public function read(): array
+    public function read(string $userId): array
     {
-        if (!is_file($this->file)) {
-            return $this->defaults();
-        }
-        $raw = file_get_contents($this->file);
-        $data = $raw !== false ? json_decode($raw, true) : null;
-        if (!is_array($data)) {
-            return $this->defaults();
-        }
+        $all = $this->readAll();
+        $d = $all[$userId] ?? null;
         return [
-            'points'             => (int) ($data['points'] ?? 0),
-            'completedPomodoros' => (int) ($data['completedPomodoros'] ?? 0),
+            'points'             => (int) ($d['points'] ?? 0),
+            'completedPomodoros' => (int) ($d['completedPomodoros'] ?? 0),
         ];
     }
 
-    /** Suma un pomodoro completado y devuelve el progreso actualizado. */
-    public function addCompletedPomodoro(): array
+    public function addCompletedPomodoro(string $userId): array
     {
-        $data = $this->read();
-        $data['completedPomodoros'] += 1;
-        $data['points'] += self::POINTS_PER_POMODORO;
-        $this->write($data);
-        return $data;
+        $all = $this->readAll();
+        $d = $this->read($userId);
+        $d['completedPomodoros'] += 1;
+        $d['points'] += self::POINTS_PER_POMODORO;
+        $all[$userId] = $d;
+        $this->writeAll($all);
+        return $d;
     }
 
-    public function reset(): array
+    public function reset(string $userId): array
     {
-        $data = $this->defaults();
-        $this->write($data);
-        return $data;
+        $all = $this->readAll();
+        $all[$userId] = ['points' => 0, 'completedPomodoros' => 0];
+        $this->writeAll($all);
+        return $all[$userId];
     }
 
     public function pointsPerPomodoro(): int
@@ -58,21 +55,22 @@ final class ProgressService
         return self::POINTS_PER_POMODORO;
     }
 
-    private function write(array $data): void
+    private function readAll(): array
+    {
+        if (!is_file($this->file)) {
+            return [];
+        }
+        $raw = file_get_contents($this->file);
+        $data = $raw !== false ? json_decode($raw, true) : null;
+        return is_array($data) ? $data : [];
+    }
+
+    private function writeAll(array $all): void
     {
         $dir = dirname($this->file);
         if (!is_dir($dir)) {
             mkdir($dir, 0777, true);
         }
-        file_put_contents(
-            $this->file,
-            json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE)
-        );
-    }
-
-    /** @return array{points:int, completedPomodoros:int} */
-    private function defaults(): array
-    {
-        return ['points' => 0, 'completedPomodoros' => 0];
+        file_put_contents($this->file, json_encode($all, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
     }
 }

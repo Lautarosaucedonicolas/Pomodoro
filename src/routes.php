@@ -6,6 +6,7 @@ use App\Core\Router;
 use App\Core\Response;
 use App\Controllers\ProgressController;
 use App\Controllers\ContentController;
+use App\Controllers\AuthController;
 
 /**
  * Definición central de rutas.
@@ -25,4 +26,10 @@ return static function (Router $router): void {
 
     // --- API: contenido de neurociencia (niveles) ---
     $router->get('/api/content', [new ContentController(), 'index']);
+
+    // --- API: autenticación ---
+    $router->post('/api/auth/register', [new AuthController(), 'register']);
+    $router->post('/api/auth/login', [new AuthController(), 'login']);
+    $router->post('/api/auth/logout', [new AuthController(), 'logout']);
+    $router->get('/api/auth/me', [new AuthController(), 'me']);
 };

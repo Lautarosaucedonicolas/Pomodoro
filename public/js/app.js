@@ -183,8 +183,97 @@ $('#btn-reset-all').addEventListener('click', async () => {
 });
 
 // ==========================================================================
+// Autenticación (UI)
+// ==========================================================================
+const appParts = ['#main-tabs', '#header-stats', '#user-chip', '#app-main', '#app-footer'];
+
+function showApp(user) {
+  $('#auth').classList.add('hidden');
+  appParts.forEach((s) => $(s).classList.remove('hidden'));
+  $('#user-name').textContent = user.name;
+  render();
+  loadState();
+  loadContent();
+}
+
+function showAuth() {
+  pause();
+  appParts.forEach((s) => $(s).classList.add('hidden'));
+  $('#auth').classList.remove('hidden');
+  gotoAuthView('login');
+}
+
+function gotoAuthView(which) {
+  $('#auth-login').classList.toggle('hidden', which !== 'login');
+  $('#auth-register').classList.toggle('hidden', which !== 'register');
+}
+
+function setError(id, msg) { $('#' + id).textContent = msg; }
+
+// Alternar login/registro
+document.querySelectorAll('[data-goto]').forEach((a) => {
+  a.addEventListener('click', (e) => { e.preventDefault(); gotoAuthView(a.dataset.goto); });
+});
+
+// Mostrar/ocultar contraseña
+document.querySelectorAll('.pw-toggle').forEach((btn) => {
+  btn.addEventListener('click', () => {
+    const input = btn.previousElementSibling;
+    input.type = input.type === 'password' ? 'text' : 'password';
+  });
+});
+
+// Botones "próximamente" (Google / olvidé contraseña)
+document.querySelectorAll('[data-soon]').forEach((el) => {
+  el.addEventListener('click', (e) => { e.preventDefault(); showToast('Esa función llega pronto 🙌'); });
+});
+
+// Login
+$('#form-login').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  setError('login-error', '');
+  const f = e.target;
+  try {
+    const user = await Auth.login({ email: f.email.value.trim(), password: f.password.value });
+    showApp(user);
+  } catch (err) {
+    setError('login-error', err.message);
+  }
+});
+
+// Registro
+$('#form-register').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  setError('register-error', '');
+  const f = e.target;
+  if (f.password.value !== f.confirm.value) {
+    setError('register-error', 'Las contraseñas no coinciden');
+    return;
+  }
+  try {
+    const user = await Auth.register({
+      name: f.name.value.trim(),
+      email: f.email.value.trim(),
+      password: f.password.value,
+    });
+    showApp(user);
+  } catch (err) {
+    setError('register-error', err.message);
+  }
+});
+
+// Cerrar sesión
+$('#btn-logout').addEventListener('click', async () => {
+  await Auth.logout();
+  showAuth();
+});
+
+// ==========================================================================
 // Init
 // ==========================================================================
-render();
-loadState();
-loadContent();
+(async function init() {
+  render();
+  const user = await Auth.me();
+  if (user) showApp(user);
+  else showAuth();
+})();
