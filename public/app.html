@@ -5,6 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>NeuroFocus</title>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧠</text></svg>" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" />
   <link rel="stylesheet" href="css/style.css" />
   <script type="text/javascript">
     (function(c,l,a,r,i,t,y){
@@ -16,18 +19,20 @@
 </head>
 <body>
   <header class="topbar">
-    <h1>🧠 NeuroFocus</h1>
-    <nav class="tabs hidden" id="main-tabs">
-      <button class="tab active" data-view="pomodoro">Hacer pomodoros</button>
-      <button class="tab" data-view="brain">Mi cerebro</button>
-    </nav>
-    <div class="stats hidden" id="header-stats">
-      <span>Nivel <strong id="stat-level">1</strong></span>
-      <span><strong id="stat-points">0</strong> pts</span>
+    <div class="brand"><span class="brand-logo">🧠</span> NeuroFocus</div>
+
+    <div class="levelbar hidden" id="levelbar">
+      <span class="level-badge">⭐ Nivel <strong id="stat-level">1</strong></span>
+      <div class="xp"><div class="xp-fill" id="xp-fill"></div></div>
+      <span class="xp-text" id="xp-text">0 / 20 XP</span>
     </div>
-    <div class="user-chip hidden" id="user-chip">
-      <span id="user-name"></span>
-      <button id="btn-logout" class="btn ghost small">Salir</button>
+
+    <div class="topright hidden" id="topright">
+      <span class="streak">🔥 Racha <strong id="streak-days">0</strong> días</span>
+      <div class="user-chip" id="user-chip">
+        <span id="user-name"></span>
+        <button id="btn-logout" class="btn ghost small">Salir</button>
+      </div>
     </div>
   </header>
 
@@ -112,52 +117,69 @@
     </section>
   </div>
 
-  <main id="app-main" class="hidden">
-    <!-- ================= SECCIÓN POMODORO ================= -->
-    <section id="view-pomodoro" class="view active">
-      <div class="timer-card">
-        <p class="phase" id="phase-label">Enfoque</p>
-        <div class="clock" id="clock">25:00</div>
-        <div class="controls">
-          <button id="btn-start" class="btn primary">Empezar</button>
-          <button id="btn-pause" class="btn" disabled>Pausar</button>
-          <button id="btn-reset" class="btn ghost">Reiniciar</button>
-        </div>
-        <label class="test-mode">
-          <input type="checkbox" id="test-mode" />
-          Modo prueba (segundos en vez de minutos)
-        </label>
-      </div>
+  <main id="app-main" class="dashboard hidden">
+    <!-- ---------- Columna izquierda: misiones + logros ---------- -->
+    <aside class="col col-left">
+      <section class="panel">
+        <h3 class="panel-title">🎯 Misiones</h3>
+        <ul class="misiones" id="misiones"></ul>
+      </section>
+      <section class="panel">
+        <h3 class="panel-title">🏆 Logros</h3>
+        <ul class="logros" id="logros"></ul>
+      </section>
+    </aside>
 
-      <div class="progress-card">
-        <p>Pomodoros completados: <strong id="pomo-count">0</strong></p>
-        <div class="bar"><div class="bar-fill" id="level-bar"></div></div>
-        <p class="next" id="next-level-text"></p>
-      </div>
-
-      <div class="unlocked-card">
-        <h2>🧠 Neurociencia del aprendizaje</h2>
-        <p class="hint">Cada nivel desbloquea un dato nuevo.</p>
-        <ul id="learning-list"></ul>
-      </div>
-    </section>
-
-    <!-- ================= SECCIÓN MI CEREBRO ================= -->
-    <section id="view-brain" class="view">
-      <div class="brain-wrap">
+    <!-- ---------- Columna central: cerebro + timer ---------- -->
+    <section class="col col-center">
+      <div class="brain-stage">
         <div id="brain3d-container" class="brain3d">
           <div id="brain-tooltip" class="brain-tooltip hidden"></div>
           <div id="brain-status" class="brain-status hidden"></div>
         </div>
-        <p class="hint canvas-hint">Arrastrá para girar · rueda para acercar</p>
+        <p class="brain-caption">Entrenando tu cerebro</p>
       </div>
 
-      <div class="brain-side">
-        <h2>Tu cerebro se ilumina a medida que subís de nivel</h2>
-        <p class="hint">Regiones iluminadas: <strong id="regions-count">0</strong> / <span id="regions-total">8</span></p>
-        <div id="brain-content"></div>
+      <div class="timer-panel">
+        <p class="phase" id="phase-label">Enfoque</p>
+        <div class="clock" id="clock">25:00</div>
+        <div class="controls">
+          <button id="btn-start" class="btn primary">▶ Iniciar</button>
+          <button id="btn-pause" class="btn" disabled>Pausa</button>
+          <button id="btn-reset" class="btn ghost">Reiniciar</button>
+          <button id="btn-sonido" class="btn ghost" type="button" title="Activar/silenciar sonido">🔊</button>
+        </div>
+        <div class="ambiente">
+          <label for="ambiente-select">Ambiente</label>
+          <select id="ambiente-select">
+            <option value="ninguno">Ninguno</option>
+            <option value="lluvia">Lluvia 🌧️</option>
+            <option value="bosque">Bosque 🌲</option>
+            <option value="relajante">Relajante 🎐</option>
+          </select>
+          <input type="range" id="ambiente-vol" min="0" max="100" value="50" title="Volumen del ambiente" />
+        </div>
+        <label class="test-mode">
+          <input type="checkbox" id="test-mode" /> Modo prueba (segundos en vez de minutos)
+        </label>
       </div>
     </section>
+
+    <!-- ---------- Columna derecha: dato + stats + próximo ---------- -->
+    <aside class="col col-right">
+      <section class="panel">
+        <h3 class="panel-title">💡 Dato desbloqueado</h3>
+        <p class="dato" id="dato-desbloqueado">Completá tu primer pomodoro para desbloquear tu primer dato.</p>
+      </section>
+      <section class="panel">
+        <h3 class="panel-title">📊 Estadísticas</h3>
+        <ul class="stats-list" id="stats-list"></ul>
+      </section>
+      <section class="panel">
+        <h3 class="panel-title">🔒 Próximo desbloqueo</h3>
+        <div class="proximo" id="proximo">—</div>
+      </section>
+    </aside>
   </main>
 
   <!-- Aviso de subida de nivel -->
@@ -175,6 +197,8 @@
     }
   }
   </script>
+  <script src="sonidos/sonidos.js"></script>
+  <script src="sonidos/ambiente.js"></script>
   <script src="js/auth.js"></script>
   <script src="js/store.js"></script>
   <script type="module" src="js/brain3d.js"></script>

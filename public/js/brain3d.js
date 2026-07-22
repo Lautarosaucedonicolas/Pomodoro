@@ -416,8 +416,8 @@ function updateHover() {
 // Loop
 // ==========================================================================
 function brainVisible() {
-  const el = document.getElementById('view-brain');
-  return el && el.classList.contains('active');
+  const main = document.getElementById('app-main');
+  return main && !main.classList.contains('hidden');
 }
 
 function animate() {
@@ -453,39 +453,27 @@ function setStatus(msg) {
 async function fetchData() {
   const data = await window.Store.getContent();
   levelsData = data.levels || [];
-  renderCards();
   applyLevels();
 }
 
-function renderCards() {
-  const unlocked = levelsData.filter((l) => l.unlocked).length;
-  document.getElementById('regions-count').textContent = unlocked;
-  document.getElementById('regions-total').textContent = levelsData.length;
-  const box = document.getElementById('brain-content');
-  box.innerHTML = '';
-  levelsData.forEach((lv) => {
-    const card = document.createElement('div');
-    card.className = 'brain-card' + (lv.unlocked ? '' : ' locked');
-    const dot = `<span class="dot" style="background:${REGION_HEX[lv.brainRegion] || '#888'}"></span>`;
-    card.innerHTML = lv.unlocked
-      ? `<h3>${dot}Nivel ${lv.level} · ${lv.name}</h3>
-         <div>${lv.neuroThinking}</div>
-         <div class="ex">🏋️ Ejercicio: ${lv.exercise}</div>`
-      : `<h3>${dot}Nivel ${lv.level} · 🔒</h3><div>Se desbloquea a los ${lv.pointsRequired} pts.</div>`;
-    box.appendChild(card);
-  });
+// ==========================================================================
+// Arranque: app.js llama ensure() cuando muestra el dashboard (logueado).
+// ==========================================================================
+function ensure() {
+  try {
+    if (!started) initScene();
+    else onResize();
+    fetchData();
+  } catch (e) {
+    console.error('[Brain3D] Error al iniciar el 3D:', e);
+    const s = document.getElementById('brain-status');
+    if (s) { s.textContent = 'Error 3D: ' + e.message; s.classList.remove('hidden'); }
+  }
 }
 
-// ==========================================================================
-// Arranque perezoso
-// ==========================================================================
-function onBrainTabShown() {
-  if (!started) initScene();
-  else onResize();
-}
-const brainTab = document.querySelector('.tab[data-view="brain"]');
-if (brainTab) brainTab.addEventListener('click', onBrainTabShown);
+window.Brain3D = { refresh: fetchData, ensure };
 
-fetchData();
-
-window.Brain3D = { refresh: fetchData };
+// Por si este módulo (deferred) carga DESPUÉS de que app.js ya mostró el
+// dashboard: si el dashboard ya está visible, arrancamos igual.
+const _main = document.getElementById('app-main');
+if (_main && !_main.classList.contains('hidden')) ensure();
